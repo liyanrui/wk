@@ -5,17 +5,6 @@
 #include <wk-box.h>
 #include <wk-array.h>
 
-/* 用于包含函数内部只执行一次的代码片段 */
-#define wk_first_run_begin \
-        static bool _wk_first_run_ = true; \
-        if (_wk_first_run_) { \
-        _Static_assert(1 == 1, "为了宏调用能加分号，我也是拼了")
-
-#define wk_first_run_end \
-        _wk_first_run_ = false; \
-} \
-_Static_assert(1 == 1, "为了宏调用能加分号，我也是拼了")
-
 /* 声明总线 */
 #define wk_bus_declare(CamelName, udline_name) \
 extern WKArray *_##udline_name##_bus_; \
@@ -57,5 +46,27 @@ void udline_name##_bus_connect(const char *type, CamelName action) { \
 /* typedef int _this_type_never_used_##__LINE__##_ */ \
 /* 或者用 C11 支持的静态断言 */ \
 _Static_assert(1 == 1, "为了宏调用能加分号，我也是拼了")
+
+/*----------------*/
+/* 下面是常用的总线 */
+/*----------------*/
+
+/* 释放对象 */
+typedef void (*WKFree)(void *obj);
+wk_bus_declare(WKFree, wk_free);
+void wk_free(WKBox *a);
+void wk_free_bus_connect(const char *type, WKFree action);
+
+/* 计算散列值 */
+typedef size_t (*WKHash)(void *obj);
+wk_bus_declare(WKHash, wk_hash);
+size_t wk_hash(WKBox *a);
+void wk_hash_bus_connect(const char *type, WKHash action);
+
+/* 测试两个对象是否相等 */
+typedef bool (*WKEqual)(WKBox *a, WKBox *b);
+wk_bus_declare(WKEqual, wk_equal);
+bool wk_equal(WKBox *a, WKBox *b);
+void wk_equal_bus_connect(const char *type, WKEqual action);
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef WK_V_H
 #define WK_V_H
 #include <wk-err.h>
-#include <wk-free.h>
+#include <wk-bus.h>
 
 #define _wk_global_boxes_n_ 1024
 extern size_t _wk_global_scope_;

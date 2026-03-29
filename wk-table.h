@@ -1,8 +1,6 @@
 #ifndef WK_TABLE_H
 #define WK_TABLE_H
-#include <wk-hash.h>
-#include <wk-equal.h>
-#include <wk-free.h>
+#include <wk-bus.h>
 #include <wk-list.h>
 
 typedef struct {

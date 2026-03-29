@@ -1,12 +1,23 @@
 #include <stdint.h>
 #include "wk-str.h"
 
-/* WKStr 所支持的二阶多态函数 */
-static void wk_box_str_free(WKBox *str_box);
+/* 二阶多态函数所需 */
+static size_t wk_raw_str_hash(const char *raw);
+static size_t wk_str_hash(WKStr *str);
 static bool wk_box_str_eq(WKBox *a, WKBox *b);
-static size_t wk_box_str_hash(WKBox *a);
 
 WKStr *wk_str(const char *raw) {
+        /* 支持的总线函数 */
+        bool first_run = true;
+        if (first_run) {
+                first_run = false;
+                wk_free_bus_connect("WKStr *", (WKFree)wk_str_free);
+                wk_hash_bus_connect("const char *", (WKHash)wk_raw_str_hash);
+                wk_hash_bus_connect("WKStr *", (WKHash)wk_str_hash);
+                /* 基于盒子的异构类型比较 */
+                wk_equal_bus_connect("const char *", wk_box_str_eq);
+                wk_equal_bus_connect("WKStr *", wk_box_str_eq);
+        }
         size_t m, n;
         if (raw) {
                 n = strlen(raw);
@@ -28,14 +39,6 @@ WKStr *wk_str(const char *raw) {
                 free(body);
                 wk_err("failed to create WKStr object");
         }
-        /* 为一些二阶多态函数提供支持 */
-        wk_first_run_begin;
-        wk_free_bus_connect("WKStr *", wk_box_str_free);
-        wk_equal_bus_connect("WKStr *", wk_box_str_eq);
-        wk_equal_bus_connect("const char *", wk_box_str_eq);
-        wk_hash_bus_connect("WKStr *", wk_box_str_hash);
-        wk_hash_bus_connect("const char *", wk_box_str_hash);
-        wk_first_run_end;
         /* 正确与错误的返回点 */
         return str;
         wk_fallback_with(NULL);
@@ -158,41 +161,39 @@ ERROR:
 }
 
 /* 二阶多态函数特化 */
-static void wk_box_str_free(WKBox *str_box) {
-        wk_str_free(wk_box_get(str_box, WKStr *));
-}
-
+/* 由于需要支持 WKStr 与 C 字符串的比较，故而只能在盒子层面实现 */
 static bool wk_box_str_eq(WKBox *a, WKBox *b) {
-        const char *x, *y;
+        const char *x;
         if (strcmp(a->type, "WKStr *") == 0) {
                 x = wk_box_get(a, WKStr *)->body;
         } else if (strcmp(a->type, "const char *") == 0) {
                 x = wk_box_get(a, const char *);
         } else wk_err("invalid string object!");
-        
+        const char *y;
         if (strcmp(b->type, "WKStr *") == 0) {
                 y = wk_box_get(b, WKStr *)->body;
         } else if (strcmp(b->type, "const char *") == 0) {
                 y = wk_box_get(b, const char *);
         } else wk_err("invalid string object!");
         if (!x || !y) wk_err("invalid WKBox object");
-        
+        /* 比较 x 与 y */
         return strcmp(x, y) == 0 ? true : false;
         wk_fallback_with(false);
 }
 
-static size_t wk_box_str_hash(WKBox *str_box) {
+static size_t wk_raw_str_hash(const char *raw) {
+        if (!raw) wk_err("invalid string");
         size_t hash = 5381;
-        const char *p;
-        if (wk_box_is(str_box, "WKStr *")) p = wk_box_get(str_box, WKStr *)->body;
-        else if (wk_box_is(str_box, "const char *")) p = wk_box_get(str_box, const char *);
-        else wk_err("invalid string type");
-        if (p) {
-                while (*p != '\0') {
-                hash = (hash << 5) + hash + *p;
-                p++;
-                }
+        while (*raw != '\0') {
+                hash = (hash << 5) + hash + *raw;
+                raw++;
         }
         return hash;
+        wk_fallback_with(0);
+}
+
+static size_t wk_str_hash(WKStr *str) {
+        if (!str) wk_err("invalid WKStr object");
+        return wk_raw_str_hash(str->body);
         wk_fallback_with(0);
 }

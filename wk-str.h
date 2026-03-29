@@ -1,8 +1,6 @@
 #ifndef WK_STR_H
 #define WK_STR_H
 #include <wk-v.h>
-#include <wk-equal.h>
-#include <wk-hash.h>
 
 typedef struct {
         size_t n;    /* 字符串长度 */

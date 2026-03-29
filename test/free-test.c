@@ -1,5 +1,4 @@
 #include "wk-str.h"
-#include "wk-free.h"
 
 int main(void) {
         printf(">>> testing free...\n");

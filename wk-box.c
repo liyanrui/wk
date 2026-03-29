@@ -42,7 +42,8 @@ void wk_box_free(WKBox *box) {
 void *WK_BOX_GET(WKBox *box, size_t size, const char *type) {
         if (!box) wk_err("invalid WKBox object");
         /* 类型检测 */
-        if (!wk_box_is(box, type) && !wk_box_is(box, "void *")) {
+        if (!wk_box_is(box, type) && strcmp(type, "void *") != 0) {
+                printf("%s:%s\n", box->type, type);
                 wk_err("type not matched");
         }
         if (box->size < size) { /* 取数据时，长度可以小于盒子里数据的长度 */
@@ -52,4 +53,3 @@ void *WK_BOX_GET(WKBox *box, size_t size, const char *type) {
         return box->body;
         wk_fallback_with(NULL);
 }
-
