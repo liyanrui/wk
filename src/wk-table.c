@@ -1,4 +1,3 @@
-#include <math.h>
 #include "wk-list.h"
 #include "wk-table.h"
 
@@ -15,12 +14,12 @@ static WKEntry *wk_entry(WKBox *key, void *data, size_t n) {
 
 static bool is_prime_number(size_t x)
 {
-        size_t k = sqrt(x);
+        /* 用 i^2 避免调用 math 库里的 sqrt */
         size_t i = 2;
-        for (; i <= k; i++) {
+        for (; i * i <= x; i++) {
                 if (x % i == 0) break;
         }
-        return (i > k);
+        return (i * i > x);
 }
 
 /* 若 n 为散列表长度，则以下函数可以选出距离 n 最近的素数 */
