@@ -32,7 +32,7 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
         WKLink *it = arg_list->head;
         while (it) {
                 WKLink *next = it->next;
-                const char *a = wk_list_get(arg_list, it, char *);
+                const char *a = wk_link_get(it, char *);
                 if (strstr(a, "--") == a) { /* a 为长选项 */
                         size_t hits = 0;
                         size_t target = 0;
@@ -63,14 +63,14 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
                         if (strcmp(type, "text") == 0) {
                                 it = next;
                                 next = it->next;
-                                args[target].value.text = wk_list_get(arg_list, it, char *);
+                                args[target].value.text = wk_link_get(it, char *);
                                 wk_list_del(arg_list, it);
                                 goto NEXT_1;
                         }
                         if (strcmp(type, "numeric") == 0) {
                                 it = next;
                                 next = it->next;
-                                args[target].value.numeric = atof(wk_list_get(arg_list, it, char *));
+                                args[target].value.numeric = atof(wk_link_get(it, char *));
                                 wk_list_del(arg_list, it);
                                 goto NEXT_1;
                         }
@@ -82,7 +82,7 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
         it = arg_list->head;
         while (it) {
                 WKLink *next = it->next;
-                const char *a = wk_list_get(arg_list, it, char *);
+                const char *a = wk_link_get(it, char *);
                 if (strstr(a, "-") == a) {
                         size_t hits = 0;
                         size_t target = 0;
@@ -109,14 +109,14 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
                         if (strcmp(type, "text") == 0) {
                                 it = next;
                                 next = it->next;
-                                args[target].value.text = wk_list_get(arg_list, it, char *);
+                                args[target].value.text = wk_link_get(it, char *);
                                 wk_list_del(arg_list, it);
                                 goto NEXT_2;
                         }
                         if (strcmp(type, "numeric") == 0) {
                                 it = next;
                                 next = it->next;
-                                args[target].value.numeric = atof(wk_list_get(arg_list, it, char *));
+                                args[target].value.numeric = atof(wk_link_get(it, char *));
                                 wk_list_del(arg_list, it);
                                 goto NEXT_2;
                         }
@@ -129,7 +129,7 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
         it = arg_list->head;
         while (it) {
                 WKLink *next = it->next;
-                const char *a = wk_list_get(arg_list, it, char *);
+                const char *a = wk_link_get(it, char *);
                 while (args[trace].name) {
                         if (trace >= argc) {
                                 fprintf(stderr, "invalid argument!\n");

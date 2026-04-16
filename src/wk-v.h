@@ -15,7 +15,7 @@ void *WK_V(void *obj, size_t n, const char *type);
 
 #define wk_v_end do { \
         /* 释放对象 */ \
-        while (1) { \
+        while (_wk_global_boxes_) { \
                 wk_free(wk_array_get(_wk_global_boxes_, \
                                      _wk_global_scope_ - 1, \
                                      WKBox *)); \
@@ -23,7 +23,8 @@ void *WK_V(void *obj, size_t n, const char *type);
                 if (_wk_global_scope_ == _wk_local_scope_) break; \
         } \
         /* 缩容 */ \
-        if (_wk_global_boxes_->n > _wk_global_boxes_n_ \
+        if (_wk_global_boxes_ \
+            && _wk_global_boxes_->n > _wk_global_boxes_n_ \
             && _wk_global_scope_ < _wk_global_boxes_n_) { \
                 while (_wk_global_boxes_->n > _wk_global_boxes_n_) { \
                         wk_array_del(_wk_global_boxes_, _wk_global_boxes_->n - 1); \

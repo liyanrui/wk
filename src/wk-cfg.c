@@ -25,7 +25,7 @@ Token *create_token(TokenType type, size_t line, WKStr *content) {
 
 void tokens_free(WKList *tokens) {
         for (WKLink *it = tokens->head; it; it = it->next) {
-                Token *t = wk_list_get(tokens, it, Token *);
+                Token *t = wk_link_get(it, Token *);
                 if (t) {
                         if (t->content) wk_str_free(t->content);
                         free(t);
@@ -227,9 +227,9 @@ STOP:
                 WKLink *it = tokens->head;
                 cfg = wk_table(WKStr *);
                 while (it) {
-                        Token *a = wk_list_get(tokens, it, Token *);
+                        Token *a = wk_link_get(it, Token *);
                         if (it->next) {
-                                Token *b = wk_list_get(tokens, it->next, Token *);
+                                Token *b = wk_link_get(it->next, Token *);
                                 if ((a->type == PLAIN_LEFT_V || a->type == QUOTED_LEFT_V)
                                     && (b->type == PLAIN_RIGHT_V || b->type == QUOTED_RIGHT_V)) {
                                         WKStr *v = b->content;
@@ -253,7 +253,7 @@ void wk_cfg_free(WKTable *cfg) {
                 WKList *bucket = wk_array_get(cfg->body, i, WKList *);
                 if (!bucket) wk_err("invalid configuation!");
                 for (WKLink *it = bucket->head; it != NULL; it = it->next) {
-                        WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                        WKEntry *entry = wk_link_get(it, WKEntry *);
                         if (!entry) wk_err("invalid key-value in WKTable object!");
                         WKStr *val = *(WKStr **)entry->body; /* 注意，table 里存储的是值的地址！ */
                         wk_str_free(val);

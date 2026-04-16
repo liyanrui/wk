@@ -3,6 +3,10 @@
 OPT="-std=c11 -pedantic -Wall -g"
 MEMCHECK="valgrind --leak-check=yes"
 
+gcc $OPT -I../src ../src/wk-{err,box,array,bus}.c compare-test.c -o compare-test
+./compare-test
+echo "-----------------"
+
 gcc $OPT -I../src ../src/wk-{err,array,tree}.c tree-test.c -o tree-test
 ./tree-test
 echo "-----------------"
@@ -17,6 +21,10 @@ echo "-----------------"
 
 gcc $OPT -I../src ../src/wk-{err,box,array,bus,v,str}.c hash-test.c -o hash-test
 ./hash-test
+echo "-----------------"
+
+gcc $OPT -I../src ../src/wk-{err,box,array,bus,v,str}.c equal-test.c -o equal-test
+./equal-test
 echo "-----------------"
 
 gcc $OPT -I../src ../src/wk-{err,box,array,bus,v,str}.c v-test.c -o v-test

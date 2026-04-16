@@ -25,9 +25,8 @@ void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit, size_t u);
         WK_ARRAY_PUT(array, index, &_tmp_unit_, sizeof(T)); \
 } while (0)
 
-const void *WK_ARRAY_GET(WKArray *array, size_t i, size_t u);
-#define wk_array_get(array, i, T) \
-        *(T*)WK_ARRAY_GET(array, i, sizeof(T))
+const void *WK_ARRAY_GET(WKArray *array, size_t i);
+#define wk_array_get(array, i, T) (*(T*)WK_ARRAY_GET(array, i))
 
 void wk_array_del(WKArray *array, size_t i);
 

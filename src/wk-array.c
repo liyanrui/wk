@@ -3,7 +3,6 @@
 #include "wk-array.h"
 
 WKArray *WK_ARRAY(size_t u) {
-        if (u == 0) wk_err("invalid size");
         WKArray *array = malloc(sizeof(WKArray));
         if (!array) wk_err("failed to create WKArray object");
         *array = (WKArray){0, u, 0, NULL};
@@ -12,10 +11,8 @@ WKArray *WK_ARRAY(size_t u) {
 }
 
 void wk_array_free(WKArray *array) {
-        if (!array) wk_err("invalid WKArray object");
         free(array->body);
         free(array);
-        wk_fallback;
 }
 
 void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit, size_t u) {
@@ -26,7 +23,6 @@ void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit, size_t u) {
 }
 
 void WK_ARRAY_ADD(WKArray *array, void *unit, size_t u) {
-        if (!unit) wk_err("invalid unit");
         if (array->u != u) wk_err("unit size not matched");
         if (!array->body) {
                 array->body = malloc(u);
@@ -47,18 +43,12 @@ void WK_ARRAY_ADD(WKArray *array, void *unit, size_t u) {
         wk_fallback;
 }
 
-const void *WK_ARRAY_GET(WKArray *array, size_t i, size_t u) {
-        if (!array) wk_err("invalid WKArray Object");
-        if (array->u < u) wk_err("unit size not matched");
-        if (i >= array->n) wk_err("out-of-bounds access");
-        void *data = (char *)(array->body) + i * u;
-        if (!data) wk_err("invalid value");
+const void *WK_ARRAY_GET(WKArray *array, size_t i) {
+        void *data = (char *)array->body + i * array->u;
         return data;
-        wk_fallback_with(NULL);
 }
 
 void wk_array_del(WKArray *array, size_t i) {
-        if (!array) wk_err("invalid WKArray object");
         if (i >= array->n) wk_err("out-of-bounds access");
         /* 将 [i + 1, array->n) 向左移一个单元 */
         char *a = array->body; /* 将 void * 转化为 char *，使之支持指针运算 */

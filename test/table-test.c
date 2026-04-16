@@ -20,6 +20,7 @@ int main(void) {
         wk_table_del(table, wk_box_ref("WED", const char *));
         /* 再检索：若是用 wk_table_query 会引发程序报错，继而崩溃, 需要用 WK_TABLE_QUERY*/
         /* v = wk_table_query(table, wk_box_ref("WED", const char *), const char *); */
+	printf("preparing to fail!\n");
         void *nothing = WK_TABLE_QUERY(table, wk_box_ref("WED", const char *), sizeof(const char *));
         WK_HOPE(!nothing);
         wk_table_free(table);

@@ -17,7 +17,7 @@ int main(void) {
         int arr[] = {1, 3};
         size_t i = 0;
         for (WKLink *it = list->head; it; it = it->next) {
-                if (arr[i] != wk_list_get(list, it, int)) {
+                if (arr[i] != wk_link_get(it, int)) {
                         success = false;
                         break;
                 }

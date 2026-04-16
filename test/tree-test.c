@@ -25,10 +25,10 @@ int main(void) {
         wk_tree_add(tree, b2, 6, int);
         /* 测试根的第 4 个子分支的值是否为 3 */
         WKBranch *b3 = wk_array_get(tree->root->lower, 3, WKBranch *);
-        WK_HOPE(3 == wk_tree_get(tree, b3, int));
+        WK_HOPE(3 == wk_branch_get(b3, int));
         /* 测试 b2 的第 2 个子分支的值是否为 6 */
         WKBranch *b2_1 = wk_array_get(b2->lower, 1, WKBranch *);
-        WK_HOPE(6 == wk_tree_get(tree, b2_1, int));
+        WK_HOPE(6 == wk_branch_get(b2_1, int));
         /* 将 b2 从树中切除，并单独释放 */
         wk_tree_cut(tree, b2);
         wk_branch_free(b2);

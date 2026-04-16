@@ -61,7 +61,7 @@ static void table_resize(WKTable *table, size_t val_size) {
                 WKList *bucket = wk_array_get(table->body, i, WKList *);
                 for (WKLink *it = bucket->head; it; ) {
                         WKLink *next = it->next;
-                        WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                        WKEntry *entry = wk_link_get(it, WKEntry *);
                         size_t new_id = wk_hash(entry->key) % table->m;
                         if (new_id != i) {
                                 WKList *other = wk_array_get(table->body, new_id, WKList *);
@@ -85,7 +85,7 @@ void WK_TABLE_ADD(WKTable *table, WKBox *key, void *value, size_t val_size) {
         WKLink *y_link = NULL;
         WKEntry *y = NULL;
         for (WKLink *it = bucket->head; it != NULL; it = it->next) {
-                WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                WKEntry *entry = wk_link_get(it, WKEntry *);
                 if (!entry) wk_err("invalid WKEntry object in bucket!");
                 if (wk_equal(x->key, entry->key)) {
                         y_link = it;
@@ -120,7 +120,7 @@ void *WK_TABLE_QUERY(WKTable *table, WKBox *key, size_t val_size) {
         WKList *bucket = wk_array_get(table->body, i, WKList *);
         void *target = NULL;
         for (WKLink *it = bucket->head; it != NULL; it = it->next) {
-                WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                WKEntry *entry = wk_link_get(it, WKEntry *);
                 if (wk_equal(key, entry->key)) {
                         target = entry->body;
                         break;
@@ -136,7 +136,7 @@ void wk_table_del(WKTable *table, WKBox *key) {
         size_t i = wk_hash(key) % table->m;
         WKList *bucket = wk_array_get(table->body, i, WKList *);
         for (WKLink *it = bucket->head; it; it = it->next) {
-                WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                WKEntry *entry = wk_link_get(it, WKEntry *);
                 if (wk_equal(key, entry->key)) {
                         wk_free(entry->key);
                         free(entry->body);
@@ -155,7 +155,7 @@ void wk_table_free(WKTable *table) {
                 WKList *bucket = wk_array_get(table->body, i, WKList *);
                 if (!bucket) wk_err("invalid bucket in WKTable object!");
                 for (WKLink *it = bucket->head; it != NULL; it = it->next) {
-                        WKEntry *entry = wk_list_get(bucket, it, WKEntry *);
+                        WKEntry *entry = wk_link_get(it, WKEntry *);
                         if (!entry) wk_err("invalid key-value in WKTable object!");
                         wk_free(entry->key);
                         free(entry->body);

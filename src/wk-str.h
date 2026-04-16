@@ -9,12 +9,12 @@ typedef struct {
 } WKStr;
 
 WKStr *wk_str(const char *raw);
-WKStr *wk_v_str(const char *raw);
+WKStr *wk_str_v(const char *raw);
 void wk_str_free(WKStr *str);
 
 void wk_str_ins(WKStr *str, size_t index, const char *raw);
-void wk_str_prefix(WKStr *str, const char *raw);
-void wk_str_suffix(WKStr *str, const char *raw);
+#define wk_str_prefix(str, raw) wk_str_ins(str, 0, raw)
+#define wk_str_suffix(str, raw) wk_str_ins(str, str->n, raw)
 
 void wk_str_suffix_char(WKStr *str, char c);
 WKStr *wk_str_from_file(const char *path);

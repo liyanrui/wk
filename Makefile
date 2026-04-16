@@ -9,7 +9,7 @@ all: build/libwk.a build/libwk.so
 build/libwk.a: $(static_objects)
 	ar rcs $@ $^
 build/%.o: src/%.c
-	gcc -I./src -c $< -o $@
+	gcc -std=c11 -pedantic -Wall -I./src -c $< -o $@
 
 build/libwk.so: $(shared_objects)
 	gcc -shared $^ -o $@

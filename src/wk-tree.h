@@ -37,6 +37,5 @@ WKBranch *wk_tree_cut(WKTree *tree, WKBranch *branch);
 /* /\* 切勿将其理解为查询树的深度！ *\/ */
 /* size_t wk_tree_level(WKTree *tree); */
 
-void *WK_TREE_GET(WKTree *tree, WKBranch *target, size_t u);
-#define wk_tree_get(tree, target, T) *(T*)WK_TREE_GET(tree, target, sizeof(T))
+#define wk_branch_get(branch, T) (*(T*)(branch)->body)
 #endif

@@ -3,7 +3,6 @@
 #include "wk-list.h"
 
 WKList *WK_LIST(size_t u) {
-        if (u == 0) wk_err("invalid size");
         WKList *list = malloc(sizeof(WKList));
         if (!list) wk_err("failed to create WKList object");
         list->u = u;
@@ -15,7 +14,6 @@ WKList *WK_LIST(size_t u) {
 }
 
 void wk_list_free(WKList *list) {
-        if (!list) wk_err("invalid list");
         WKLink *it = list->head;
         while (it) {
                 WKLink *next = it->next;
@@ -24,7 +22,6 @@ void wk_list_free(WKList *list) {
                 it = next;
         }
         free(list);
-        wk_fallback;
 }
 
 static WKLink *wk_link(void *data, size_t u) {
@@ -40,7 +37,7 @@ static WKLink *wk_link(void *data, size_t u) {
 }
 
 WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data, size_t u) {
-        if (list->u != u) wk_err("data length not matched");
+        if (list->u != u) wk_err("size not matched");
         WKLink *new_link = wk_link(data, u);
         if (here) {
                 new_link->prev = here->prev;
@@ -59,7 +56,7 @@ WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data, size_t u) {
 }
 
 WKLink *WK_LIST_INSB(WKList *list, WKLink *here, void *data, size_t u) {
-        if (list->u != u) wk_err("data length not matched");
+        if (list->u != u) wk_err("size not matched");
         WKLink *new_link = wk_link(data, u);
         if (here) {
                 new_link->prev = here;
@@ -78,7 +75,6 @@ WKLink *WK_LIST_INSB(WKList *list, WKLink *here, void *data, size_t u) {
 }
 
 void wk_list_del(WKList *list, WKLink *target) {
-        if (!target) wk_err("invalid target");
         WKLink *prev = target->prev;
         WKLink *next = target->next;
         if (prev) prev->next = next;
@@ -88,12 +84,4 @@ void wk_list_del(WKList *list, WKLink *target) {
         free(target->body);
         free(target);
         list->n--;
-        wk_fallback;
-}
-
-void *WK_LIST_GET(WKList *list, WKLink *link, size_t u) {
-        if (list->u < u) wk_err("size not matched");
-        if (!link || !link->body) wk_err("invalid link");
-        return link->body;
-        wk_fallback_with(NULL);
 }
