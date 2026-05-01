@@ -225,7 +225,7 @@ STOP:
         WKTable *cfg = NULL;
         if (tokens) {
                 WKLink *it = tokens->head;
-                cfg = wk_table(WKStr *);
+                cfg = wk_table(WKStr *, WKStr *);
                 while (it) {
                         Token *a = wk_link_get(it, Token *);
                         if (it->next) {
@@ -233,7 +233,7 @@ STOP:
                                 if ((a->type == PLAIN_LEFT_V || a->type == QUOTED_LEFT_V)
                                     && (b->type == PLAIN_RIGHT_V || b->type == QUOTED_RIGHT_V)) {
                                         WKStr *v = b->content;
-                                        wk_table_add(cfg, wk_box(a->content, WKStr *), v, WKStr *);
+                                        wk_table_add(cfg, wk_pair(wk_box(a->content, WKStr *), wk_box(v, WKStr *)));
                                         a->content = NULL; /* 所有权已转移至 cfg */
                                         b->content = NULL; /* 所有权已转移至 cfg */
                                 }
@@ -245,20 +245,4 @@ STOP:
         return cfg;
 ERROR:
         return NULL;
-}
-
-void wk_cfg_free(WKTable *cfg) {
-        if (!cfg) wk_err("invalid configuation!");
-        for (size_t i = 0; i < cfg->body->n; i++) {
-                WKList *bucket = wk_array_get(cfg->body, i, WKList *);
-                if (!bucket) wk_err("invalid configuation!");
-                for (WKLink *it = bucket->head; it != NULL; it = it->next) {
-                        WKEntry *entry = wk_link_get(it, WKEntry *);
-                        if (!entry) wk_err("invalid key-value in WKTable object!");
-                        WKStr *val = *(WKStr **)entry->body; /* 注意，table 里存储的是值的地址！ */
-                        wk_str_free(val);
-                }
-        }
-        wk_table_free(cfg);
-        wk_fallback;
 }

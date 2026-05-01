@@ -13,16 +13,16 @@ WKArray *WK_ARRAY(size_t u);
 #define wk_array(type) WK_ARRAY(sizeof(type))
 void wk_array_free(WKArray *array);
 
-void WK_ARRAY_ADD(WKArray *array, void *unit, size_t u);
+void WK_ARRAY_ADD(WKArray *array, void *unit);
 #define wk_array_add(array, U, T) do { \
         T _tmp_unit_ = U; \
-        WK_ARRAY_ADD(array, &_tmp_unit_, sizeof(T)); \
+        WK_ARRAY_ADD(array, &_tmp_unit_); \
 } while (0)
 
-void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit, size_t u);
+void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit);
 #define wk_array_put(array, index, U, T) do {     \
         T _tmp_unit_ = U; \
-        WK_ARRAY_PUT(array, index, &_tmp_unit_, sizeof(T)); \
+        WK_ARRAY_PUT(array, index, &_tmp_unit_); \
 } while (0)
 
 const void *WK_ARRAY_GET(WKArray *array, size_t i);

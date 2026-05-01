@@ -5,7 +5,7 @@
 #include <wk-box.h>
 #include <wk-array.h>
 
-/* 声明总线 */
+/* 总线声明宏 */
 #define wk_bus_declare(CamelName, udline_name) \
 extern WKArray *_##udline_name##_bus_; \
 \
@@ -13,16 +13,24 @@ typedef struct { \
         const char *type; \
         CamelName action; \
 } CamelName##Slot; \
-\
 void udline_name##_bus_connect(const char *type, CamelName action); \
+CamelName udline_name##_bus_get(const char *type); \
 /* 这行尾巴是为了让宏调用语句能像函数那样以分号结尾 */ \
 /* typedef int _this_type_never_used_##__LINE__##_ */ \
 /* 或者用 C11 支持的静态断言 */ \
 _Static_assert(1 == 1, "为了宏调用能加分号，我也是拼了")
 
-/* 定义总线 */
+/* 总线定义宏 */
 #define wk_bus_define(CamelName, udline_name) \
 WKArray *_##udline_name##_bus_ = NULL; \
+CamelName udline_name##_bus_get(const char *type) {\
+        if (!_##udline_name##_bus_) _##udline_name##_bus_ = wk_array(CamelName##Slot *); \
+        for (size_t i = 0; i < _##udline_name##_bus_->n; i++) { \
+                CamelName##Slot *slot_i = wk_array_get(_##udline_name##_bus_, i, CamelName##Slot *); \
+                if (strcmp(slot_i->type, type) == 0) return slot_i->action; \
+        } \
+        return NULL; \
+} \
 void udline_name##_bus_connect(const char *type, CamelName action) { \
         if (!_##udline_name##_bus_) _##udline_name##_bus_ = wk_array(CamelName##Slot *); \
         /* 检查是否槽位是否已被占用 */ \

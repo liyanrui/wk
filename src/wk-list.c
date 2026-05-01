@@ -36,8 +36,8 @@ static WKLink *wk_link(void *data, size_t u) {
         wk_fallback_with(NULL);
 }
 
-WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data, size_t u) {
-        if (list->u != u) wk_err("size not matched");
+WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data) {
+	size_t u = list->u;
         WKLink *new_link = wk_link(data, u);
         if (here) {
                 new_link->prev = here->prev;
@@ -55,8 +55,8 @@ WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data, size_t u) {
         wk_fallback_with(NULL);
 }
 
-WKLink *WK_LIST_INSB(WKList *list, WKLink *here, void *data, size_t u) {
-        if (list->u != u) wk_err("size not matched");
+WKLink *WK_LIST_INSB(WKList *list, WKLink *here, void *data) {
+	size_t u = list->u;
         WKLink *new_link = wk_link(data, u);
         if (here) {
                 new_link->prev = here;

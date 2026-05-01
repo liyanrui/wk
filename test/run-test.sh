@@ -3,6 +3,10 @@
 OPT="-std=c11 -pedantic -Wall -g"
 MEMCHECK="valgrind --leak-check=yes"
 
+gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,pair,heap}.c heap-test.c -lm -o heap-test
+./heap-test
+echo "-----------------"
+
 gcc $OPT -I../src ../src/wk-{err,box,array,bus}.c compare-test.c -o compare-test
 ./compare-test
 echo "-----------------"
@@ -11,11 +15,11 @@ gcc $OPT -I../src ../src/wk-{err,array,tree}.c tree-test.c -o tree-test
 ./tree-test
 echo "-----------------"
 
-gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,table,cfg}.c cfg-test.c -lm -o cfg-test
+gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,pair,table,cfg}.c cfg-test.c -lm -o cfg-test
 ./cfg-test
 echo "-----------------"
 
-gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,table}.c table-test.c -lm -o table-test
+gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,pair,table}.c table-test.c -lm -o table-test
 ./table-test
 echo "-----------------"
 

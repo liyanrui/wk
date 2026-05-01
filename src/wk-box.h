@@ -6,7 +6,7 @@
 
 typedef struct {
         const char *type;
-        size_t size;
+        size_t n;
         bool is_ref;
         void *body;
 } WKBox;

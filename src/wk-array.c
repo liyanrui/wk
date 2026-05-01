@@ -15,15 +15,15 @@ void wk_array_free(WKArray *array) {
         free(array);
 }
 
-void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit, size_t u) {
-        if (array->u != u) wk_err("unit size not matched");
-        if (i >= array->n) wk_err("out-of-bounds access");
+void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit) {
+	if (i >= array->n) wk_err("out-of-bounds access");
+	size_t u = array->u;
         memcpy((char *)(array->body) + i * u, unit, u);
         wk_fallback;
 }
 
-void WK_ARRAY_ADD(WKArray *array, void *unit, size_t u) {
-        if (array->u != u) wk_err("unit size not matched");
+void WK_ARRAY_ADD(WKArray *array, void *unit) {
+	size_t u = array->u;
         if (!array->body) {
                 array->body = malloc(u);
                 if (!array->body) wk_err("memory not enough");
