@@ -1,4 +1,3 @@
-#include "wk-str.h"
 #include "wk-table.h"
 
 int main(void) {

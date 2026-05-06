@@ -1,7 +1,8 @@
-#include "wk-str.h"
+#include "wk-bus.h"
 
 int main(void) {
         printf(">>> testing hash ...\n");
+        wk_bus_init();
         const char *raw = "hello";
         WKStr *a = wk_str(raw);
         WKBox *x = wk_box_ref(raw, const char *);

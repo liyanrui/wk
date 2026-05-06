@@ -2,6 +2,7 @@
 
 int main(void) {
 	printf(">>> testing compare ...\n");
+	wk_bus_init();
 	WKBox *u, *v;
 	u = wk_box_ref(3.14, double);
 	v = wk_box_ref(2.7, double);

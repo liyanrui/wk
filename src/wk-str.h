@@ -1,6 +1,7 @@
 #ifndef WK_STR_H
 #define WK_STR_H
-#include <wk-v.h>
+#include <string.h>
+#include <wk-err.h>
 
 typedef struct {
         size_t n;    /* 字符串长度 */
@@ -9,7 +10,6 @@ typedef struct {
 } WKStr;
 
 WKStr *wk_str(const char *raw);
-WKStr *wk_str_v(const char *raw);
 void wk_str_free(WKStr *str);
 
 void wk_str_ins(WKStr *str, size_t index, const char *raw);

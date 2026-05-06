@@ -7,12 +7,18 @@ WKHeap *WK_HEAP(const char *key_type, const char *val_type, WKHeapType type) {
 	heap->n = 0;
 	heap->body = wk_array(WKPair *);
 	/* 虚函数集 */
-	heap->cmp = wk_compare_bus_get(key_type);
-	if (!heap->cmp) heap->cmp = wk_compare;
-	heap->key_free = wk_free_bus_get(key_type);
-	if (!heap->key_free) heap->key_free = wk_free;
-	heap->val_free = wk_free_bus_get(val_type);
-	if (!heap->val_free) heap->val_free = wk_free;
+	if (key_type) {
+		wk_bus_init();
+		heap->cmp = wk_compare_bus_get(key_type);
+		heap->key_free = wk_free_bus_get(key_type);	
+	} else {
+		heap->cmp = wk_compare;
+		heap->key_free = wk_free;
+	}
+	if (val_type) {
+		wk_bus_init();
+		heap->val_free = wk_free_bus_get(val_type);
+	} else heap->val_free = wk_free;
 	return heap;
 	wk_fallback_with(NULL);
 }

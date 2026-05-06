@@ -1,7 +1,6 @@
 #ifndef WK_BUS_H
 #define WK_BUS_H
-#include <string.h>
-#include <wk-err.h>
+#include <wk-str.h>
 #include <wk-box.h>
 #include <wk-array.h>
 
@@ -14,6 +13,7 @@ typedef struct { \
         CamelName action; \
 } CamelName##Slot; \
 void udline_name##_bus_connect(const char *type, CamelName action); \
+void udline_name##_init(void); \
 CamelName udline_name##_bus_get(const char *type); \
 /* 这行尾巴是为了让宏调用语句能像函数那样以分号结尾 */ \
 /* typedef int _this_type_never_used_##__LINE__##_ */ \
@@ -76,15 +76,17 @@ bool wk_equal(WKBox *a, WKBox *b);
 wk_bus_declare(WKEqual, wk_equal);
 
 /* 比较两个对象大小 */
+/* 浮点数比较相等时，需要用误差容忍度 */
+#include <float.h>
+#define wk_flt_eps (10 * FLT_EPSILON)
+#define wk_dbl_eps (10 * DBL_EPSILON)
 /* a < b 返回 -1, a == b 返回 0, a > b 返回 1；若 a 和 b 无法比较，则返回 -2 */
 typedef int (*WKCompare)(WKBox *a, WKBox *b);
 int wk_compare(WKBox *a, WKBox *b);
 wk_bus_declare(WKCompare, wk_compare);
 
-/* 浮点数比较相等时，需要用误差容忍度 */
-#include <float.h>
-#define wk_flt_eps (10 * FLT_EPSILON)
-#define wk_dbl_eps (10 * DBL_EPSILON)
+/* 总线初始化 */
+void wk_bus_init(void);
 
 #endif
 

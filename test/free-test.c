@@ -1,7 +1,8 @@
-#include "wk-str.h"
+#include "wk-bus.h"
 
 int main(void) {
         printf(">>> testing free...\n");
+        wk_bus_init();
         size_t n = 4;
         WKBox *boxes[n];
         boxes[0] = wk_box(42, int);

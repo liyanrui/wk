@@ -2,35 +2,22 @@
 #include "wk-box.h"
 
 WKBox *WK_BOX(void *data, size_t n, const char *type) {
-        WKBox *box = malloc(sizeof(WKBox));
+        WKBox *box = malloc(sizeof(WKBox) + n);
         if (!box) wk_err("failed to create WKBox object");
         box->type = type;
-        box->n = n;
         box->is_ref = false;
-        box->body = malloc(n);
-        if (!box->body) {
-                free(box);
-                wk_err("failed to create WKBox object");
-        }
+	box->body = malloc(n);
+	if (!box->body) {
+		free(box);
+		wk_err("failed to create body of WKBox object");
+	}
         memcpy(box->body, data, n);
         return box;
         wk_fallback_with(NULL);
 }
 
-void WK_BOX_PUT(WKBox *box, void *data, size_t n, const char *type) {
-        if (box->n < n) {
-                void *new_body = realloc(box->body, n);
-                if (!new_body) wk_err("memory not enough");
-                box->body = new_body;
-        }
-        memcpy(box->body, data, n);
-        box->type = type;
-        box->n = n;
-        wk_fallback;
-}
-
 void wk_box_free(WKBox *box) {
         if (box->is_ref) return;
-        free(box->body);
+	free(box->body);
         free(box);
 }

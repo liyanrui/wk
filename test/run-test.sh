@@ -7,7 +7,7 @@ gcc $OPT -I../src ../src/wk-{err,list,box,array,bus,v,str,pair,heap}.c heap-test
 ./heap-test
 echo "-----------------"
 
-gcc $OPT -I../src ../src/wk-{err,box,array,bus}.c compare-test.c -o compare-test
+gcc $OPT -I../src ../src/wk-{err,str,box,array,bus}.c compare-test.c -o compare-test
 ./compare-test
 echo "-----------------"
 

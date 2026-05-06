@@ -1,12 +1,6 @@
 #include <stdint.h>
 #include "wk-str.h"
 
-/* 二阶多态函数所需 */
-static void wk_str_box_free(WKBox *a);
-static size_t wk_raw_str_box_hash(WKBox *a);
-static size_t wk_str_box_hash(WKBox *a);
-static bool wk_str_box_eq(WKBox *a, WKBox *b);
-
 WKStr *wk_str(const char *raw) {
         size_t m, n;
         if (raw) {
@@ -29,24 +23,9 @@ WKStr *wk_str(const char *raw) {
                 free(body);
                 wk_err("failed to create WKStr object");
         }
-	/* 支持的总线函数 */
-        bool first_run = true;
-        if (first_run) {
-                first_run = false;
-                wk_free_bus_connect("WKStr *", wk_str_box_free);
-                wk_hash_bus_connect("const char *", wk_raw_str_box_hash);
-                wk_hash_bus_connect("WKStr *", wk_str_box_hash);
-                /* 基于盒子的异构类型比较 */
-                wk_equal_bus_connect("const char *", wk_str_box_eq);
-                wk_equal_bus_connect("WKStr *", wk_str_box_eq);
-        }
         /* 正确与错误的返回点 */
         return str;
         wk_fallback_with(NULL);
-}
-
-WKStr *wk_str_v(const char *raw) {
-	return wk_v(wk_str(raw), WKStr *);
 }
 
 void wk_str_free(WKStr *str) {
@@ -144,46 +123,4 @@ WKStr *wk_str_from_file(const char *path) {
 ERROR:
         fprintf(stderr, "%s: failed to open %s!\n", __func__, path);
         return NULL;
-}
-
-/*-------------------------*/
-/* 为一些二阶多态函数提供支持 */
-/*-------------------------*/
-/* 由于需要支持 WKStr 与 C 字符串的比较，故而只能在盒子层面实现 */
-static void wk_str_box_free(WKBox *a) {
-	wk_str_free(wk_box_get(a, WKStr *));
-	wk_box_free(a);
-}
-
-static const char *wk_str_box_get(WKBox *a) {
-        const char *x;
-        if (wk_box_is(a, "WKStr *")) {
-                x = wk_box_get(a, WKStr *)->body;
-        } else if (wk_box_is(a, "const char *") || wk_box_is(a, "char *")) {
-                x = wk_box_get(a, const char *);
-        } else wk_err("invalid string object!");
-	return x;
-	wk_fallback_with(NULL);
-}
-
-static bool wk_str_box_eq(WKBox *a, WKBox *b) {
-        const char *x = wk_str_box_get(a);
-	const char *y = wk_str_box_get(b);
-        return strcmp(x, y) == 0 ? true : false;
-}
-
-static size_t wk_raw_str_box_hash(WKBox *a) {
-	const char *raw = wk_box_get(a, const char *);
-        size_t hash = 5381;
-        while (*raw != '\0') {
-                hash = (hash << 5) + hash + *raw;
-                raw++;
-        }
-        return hash;
-}
-
-static size_t wk_str_box_hash(WKBox *a) {
-	WKStr *str = wk_box_get(a, WKStr *);
-	WKBox *b = wk_box_ref(str->body, const char *);
-        return wk_raw_str_box_hash(b);
 }

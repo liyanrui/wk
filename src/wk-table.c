@@ -33,14 +33,20 @@ WKTable *WK_TABLE(const char *key_type, const char *val_type) {
                 wk_array_add(table->body, wk_list(WKBox *), WKList *);
         }
 	/* 虚函数集 */
-	table->hash = wk_hash_bus_get(key_type);
-	if (!table->hash) table->hash = wk_hash;
-	table->equal = wk_equal_bus_get(key_type);
-	if (!table->equal) table->equal = wk_equal;
-	table->key_free = wk_free_bus_get(key_type);
-	if (!table->key_free) table->key_free = wk_free;
-	table->val_free = wk_free_bus_get(val_type);
-	if (!table->val_free) table->val_free = wk_free;
+	if (key_type) {
+		wk_bus_init(); /* 初始化面向常用类型的总线 */
+		table->hash = wk_hash_bus_get(key_type);
+		table->equal = wk_equal_bus_get(key_type);
+		table->key_free = wk_free_bus_get(key_type);
+	} else {
+		table->hash = wk_hash;
+		table->equal = wk_equal;
+		table->key_free = wk_free;
+	}
+	if (val_type) {
+		wk_bus_init();
+		table->val_free = wk_free_bus_get(val_type);
+	} else table->val_free = wk_free;
         return table;
         wk_fallback_with(NULL);
 }
@@ -142,7 +148,8 @@ WKBox *wk_table_query(WKTable *table, WKBox *key) {
 }
 
 void wk_table_del(WKTable *table, WKBox *key) {
-        size_t i = table->hash(key) % table->m;
+	/* 检索过程为了更为稳健（例如兼容 WKStr * 和 const char *），使用二阶函数 */
+        size_t i = wk_hash(key) % table->m;
         WKList *bucket = wk_array_get(table->body, i, WKList *);
         for (WKLink *it = bucket->head; it; it = it->next) {
                 WKPair *entry = wk_link_get(it, WKPair *);

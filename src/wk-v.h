@@ -1,11 +1,13 @@
 #ifndef WK_V_H
 #define WK_V_H
-#include <wk-err.h>
 #include <wk-bus.h>
 
 #define _wk_global_boxes_n_ 1024
 extern size_t _wk_global_scope_;
 extern WKArray *_wk_global_boxes_;
+
+void *WK_V_BOX(void *obj, size_t n, const char *type);
+#define wk_v_box(obj, T) WK_V_BOX(obj, sizeof(T), #T)
 
 void *WK_V(void *obj, size_t n, const char *type);
 #define wk_v(obj, T) WK_V(obj, sizeof(T), #T)
