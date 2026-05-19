@@ -40,7 +40,9 @@ WKLink *WK_LIST_INSF(WKList *list, WKLink *here, void *data) {
 	size_t u = list->u;
         WKLink *new_link = wk_link(data, u);
         if (here) {
-                new_link->prev = here->prev;
+                WKLink *prev = here->prev;
+                if (prev) prev->next = new_link;
+                new_link->prev = prev;
                 new_link->next = here;
                 here->prev = new_link;
         } else {
@@ -59,9 +61,11 @@ WKLink *WK_LIST_INSB(WKList *list, WKLink *here, void *data) {
 	size_t u = list->u;
         WKLink *new_link = wk_link(data, u);
         if (here) {
+                WKLink *next = here->next;
                 new_link->prev = here;
-                new_link->next = here->next;
                 here->next = new_link;
+                if (next) next->prev = new_link;
+                new_link->next = next;
         } else {
                 if (list->n == 0) { /* 仅当 list 为空表时允许 here 为空 */
                         list->head = new_link;

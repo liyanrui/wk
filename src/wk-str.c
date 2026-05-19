@@ -119,6 +119,7 @@ WKStr *wk_str_from_file(const char *path) {
         while ((c = fgetc(f)) != EOF) {
                 wk_str_suffix_char(buffer, (char)c);
         }
+	fclose(f);
         return buffer;
 ERROR:
         fprintf(stderr, "%s: failed to open %s!\n", __func__, path);

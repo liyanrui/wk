@@ -223,7 +223,7 @@ STOP:
         if (value) wk_str_free(value);
         /* 将 tokens 中的左值和右值存入词典 */
         WKTable *cfg = NULL;
-        if (tokens) {
+        if (tokens->n > 0) {
                 WKLink *it = tokens->head;
                 cfg = wk_table(WKStr *, WKStr *);
                 while (it) {
@@ -240,8 +240,8 @@ STOP:
                                 it = it->next->next;
                         } else break;
                 }
-                tokens_free(tokens);
         }
+	tokens_free(tokens);
         return cfg;
 ERROR:
         return NULL;
