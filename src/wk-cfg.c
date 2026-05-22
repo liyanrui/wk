@@ -113,11 +113,12 @@ WKTable *wk_cfg(const char *path) {
                         } else {
                                 wk_str_suffix_char(value, c);
                                 after_c = fgetc(fp);
-                                fseek(fp, -1, SEEK_CUR);
+				fseek(fp, -1, SEEK_CUR);
                                 if (after_c == EOF) { /* 若文件最后一个字符并非换行符，而此时应当收集右值了 */
                                         Token *t = create_token(PLAIN_RIGHT_V, line, wk_str_trim(value));
                                         wk_list_suffix(tokens, t, Token *);
                                         value = NULL;
+					goto STOP; /* 由于 fseek 会清除 EOF 标志，会形成死循环，故而这里直接跳转到循环外部！ */
                                 }
                         }
                         break;
