@@ -72,19 +72,20 @@ void wk_str_del(WKStr *str, size_t begin, size_t n) {
         /* 用 begin + n 之后的内容补位 */
         memmove(str->body + begin, str->body + j, str->n - j);
         str->n -= n;
-        str->body[str->n] = '\0';
-        /* 缩容 */
-        size_t new_m = str->n + 2 * n;
-        if (new_m < str->m) {
-                char *new_data = realloc(str->body, new_m);
-                if (!new_data) wk_err("memory not enough");
-                str->body = new_data;
-                str->m = new_m;
-        }
+        /* /\* 缩容 *\/ */
+        /* size_t new_m = (str->n << 1) + 1; /\* 留出 \0 位 *\/ */
+        /* if (new_m < str->m) { */
+        /*         char *new_data = realloc(str->body, new_m); */
+        /*         if (!new_data) wk_err("memory not enough"); */
+        /*         str->body = new_data; */
+        /*         str->m = new_m; */
+        /* } */
+	str->body[str->n] = '\0';
         wk_fallback;
 }
 
 WKStr *wk_str_trim(WKStr *str) {
+	if (str->n == 0) return str;
         size_t begin = 0, n = 0;
         /* 去除首部空白字符 */
         for (const char *p = str->body; *p != '\0'; p++) {
@@ -92,6 +93,7 @@ WKStr *wk_str_trim(WKStr *str) {
                 else break;
         }
         wk_str_del(str, begin, n);
+	if (str->n == 0) return str;
         /* 去除尾部空白字符 */
         n = 0;
         for (const char *p = str->body + str->n - 1; p >= str->body; p--) {
