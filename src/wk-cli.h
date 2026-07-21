@@ -7,6 +7,7 @@
 
 typedef struct {
         const char *name;  /* 选项 */
+        const char *short_name; /* 短选项名 */
         const char *type; /* 参数类型 */
         union { /* 参数 */
                 bool toggle;
@@ -15,12 +16,12 @@ typedef struct {
         } value;
 } WKArg;
 
-#define WK_ARG_TOGGLE(opt) \
-        (WKArg){.name = opt, .type = "toggle", .value.toggle = false}
-#define WK_ARG_TEXT(opt) \
-        (WKArg){.name = opt, .type = "text", .value.text = ""}
-#define WK_ARG_NUMERIC(opt) \
-        (WKArg){.name = opt, .type = "numeric", .value.numeric = 0}
+#define WK_ARG_TOGGLE(opt, short_opt) \
+        (WKArg){.name = opt, .short_name = short_opt, .type = "toggle", .value.toggle = false}
+#define WK_ARG_TEXT(opt, short_opt) \
+        (WKArg){.name = opt, .short_name = short_opt, .type = "text", .value.text = ""}
+#define WK_ARG_NUMERIC(opt, short_opt) \
+        (WKArg){.name = opt, .short_name = short_opt, .type = "numeric", .value.numeric = 0}
 
 void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc);
 void wk_arg_print(WKArg *arg);

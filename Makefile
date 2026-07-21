@@ -9,13 +9,13 @@ all: build/libwk.a build/libwk.so
 build/libwk.a: $(static_objects)
 	ar rcs $@ $^
 build/%.o: src/%.c
-	gcc -std=c11 -pedantic -Wall -g -I./src -c $< -o $@
+	gcc -std=c11 -pedantic -Wall -O2 -I./src -c $< -o $@
 
 build/libwk.so: $(shared_objects)
 	gcc -shared $^ -o $@
 
 build/%-pic.o: src/%.c
-	gcc -I./src -fPIC -g -c $< -o $@
+	gcc -I./src -fPIC -O2 -c $< -o $@
 
 
 install:

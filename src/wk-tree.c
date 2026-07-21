@@ -15,7 +15,8 @@ void wk_tree_free(WKTree *tree) {
         free(tree);
 }
 
-WKBranch *WK_BRANCH(WKTree *tree, void *data, size_t u) {
+WKBranch *WK_BRANCH(WKTree *tree, void *data) {
+	size_t u = tree->u;
         WKBranch *branch = malloc(sizeof(WKBranch));
         if (!branch) wk_err("failed to create WKBranch object");
         branch->body = malloc(u);
@@ -40,20 +41,27 @@ void wk_branch_free(WKBranch *branch) {
         free(branch);
 }
 
-void wk_tree_graft(WKTree *tree, WKBranch *target, WKBranch *branch) {
-        if (!tree->root) {
-                tree->root = branch;
-                return;
-        }
-        branch->upper = target;
-        if (!target->lower) target->lower = wk_array(WKBranch *);
-        wk_array_add(target->lower, branch, WKBranch *);
+WKBranch *WK_TREE_ADD(WKTree *tree, WKBranch *target, void *data) {
+        WKBranch *new_branch = WK_BRANCH(tree, data);
+	if (!target) {
+		if (tree->root) wk_err("invalid WKTree object");
+		tree->root = new_branch;
+		return new_branch;
+	}
+	if (!target->lower) target->lower = wk_array(WKBranch *);
+	wk_array_ins(target->lower, target->lower->n, new_branch, WKBranch *);
+	new_branch->upper = target;
+	return new_branch;
+	wk_fallback_with(NULL);
 }
 
-WKBranch *WK_TREE_ADD(WKTree *tree, WKBranch *target, void *data, size_t u) {
-        WKBranch *new_branch = WK_BRANCH(tree, data, u);
-        wk_tree_graft(tree, target, new_branch);
-        return new_branch;
+WKBranch *WK_TREE_INS(WKTree *tree, WKBranch *target, size_t i, void *data) {
+	if (!target || !target->lower) wk_err("invalid target branch");
+        WKBranch *new_branch = WK_BRANCH(tree, data);
+	wk_array_ins(target->lower, i, new_branch, WKBranch *);
+	new_branch->upper = target;
+	return new_branch;
+	wk_fallback_with(NULL);
 }
 
 WKBranch *wk_tree_cut(WKTree *tree, WKBranch *branch) {

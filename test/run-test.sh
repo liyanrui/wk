@@ -40,7 +40,7 @@ gcc $OPT -I../src ../src/wk-{err,box,array,bus,v,str}.c free-test.c -o free-test
 echo "-----------------"
 
 gcc $OPT -I../src ../src/wk-{err,box,list,cli}.c cli-test.c -o cli-test
-./cli-test --foo  -ba "hello world" -nm 3 "i am free!"
+./cli-test --foo  -b "hello world" -n 3 "i am free!"
 echo "-----------------"
 
 gcc $OPT -I../src ../src/wk-{err,box,list}.c list-test.c -o list-test

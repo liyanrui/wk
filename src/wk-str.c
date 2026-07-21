@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdarg.h>
 #include "wk-str.h"
 
 WKStr *wk_str(const char *raw) {
@@ -112,6 +113,34 @@ void wk_str_suffix_char(WKStr *str, char c) {
         wk_str_suffix(str, s);
 }
 
+/* 在 str 里查找与 a 相同的子字符串，并将其替换为 b */ 
+void wk_str_replace(WKStr *str, const char *a, const char *b) {
+	size_t n = strlen(a);
+	WKStr *new_str = wk_str(NULL);
+	const char *a1 = str->body;
+	const char *a2 = NULL;
+	while (1) {
+		a2 = strstr(a1, a);
+		if (a2) {
+			for (const char *q = a1; q < a2; q++) {
+				wk_str_suffix_char(new_str, *q);
+			}
+			wk_str_suffix(new_str, b);
+		} else {
+			/* 加入余下部分 */
+			wk_str_suffix(new_str, a1);
+			break;
+		}
+		a2 += n;
+		a1 = a2;
+	}
+	free(str->body);
+	str->body = new_str->body;
+	str->n = new_str->n;
+	str->m = new_str->m;
+	free(new_str);
+}
+
 WKStr *wk_str_from_file(const char *path) {
         FILE *f = fopen(path, "r");
         if (!f) goto ERROR;
@@ -126,4 +155,23 @@ WKStr *wk_str_from_file(const char *path) {
 ERROR:
         fprintf(stderr, "%s: failed to open %s!\n", __func__, path);
         return NULL;
+}
+
+void wk_str_printf(WKStr *str, const char *fmt, ...) {
+	va_list args1, args2;
+	int n;
+	va_start(args1, fmt);
+	va_copy(args2, args1);
+	n = vsnprintf(NULL, 0, fmt, args1);
+	if (str->m < n + 1) {
+		str->m += (n + 1);
+		char *new_body = realloc(str->body, str->m);
+		if (!new_body) wk_err("out-of-memory");
+                str->body = new_body;
+	}
+	vsnprintf(str->body, n + 1, fmt, args2);
+	va_end(args2);
+	va_end(args1);
+	str->n = n;
+	wk_fallback;
 }

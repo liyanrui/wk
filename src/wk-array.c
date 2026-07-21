@@ -22,9 +22,10 @@ void WK_ARRAY_PUT(WKArray *array, size_t i, void *unit) {
         wk_fallback;
 }
 
-void WK_ARRAY_ADD(WKArray *array, void *unit) {
+void WK_ARRAY_INS(WKArray *array, size_t i, void *unit) {
+	if (i > array->n) wk_err("out-of-bounds access");
 	size_t u = array->u;
-        if (!array->body) {
+	if (!array->body) {
                 array->body = malloc(u);
                 if (!array->body) wk_err("memory not enough");
                 array->m = u;
@@ -38,7 +39,10 @@ void WK_ARRAY_ADD(WKArray *array, void *unit) {
                         array->m = m;
                 }
         }
-        memcpy((char *)(array->body) + array->n * u, unit, u);
+	char *a = (char *)(array->body) + i * u;
+	size_t d = array->n - i;
+	if (d > 0) memmove(a + u, a, d * u);
+        memcpy(a, unit, u);
         array->n++;
         wk_fallback;
 }

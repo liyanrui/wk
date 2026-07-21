@@ -1,26 +1,6 @@
 #include <string.h>
 #include "wk-cli.h"
 
-static double opt_match(const char *a, const char *b) {
-        size_t na = strlen(a);
-        const char *p = a, *q = b;
-        size_t hits = 0;
-        while (1) {
-                if (*p == '\0') goto FINISHED;
-                while (1) {
-                        if(*q == '\0') goto FINISHED;
-                        if (*p == *q) {
-                                hits++;
-                                break;
-                        }
-                        q++;
-                }
-                p++;
-        }
-FINISHED:
-        return na > 0 ? (double)hits/(double)na : 0;
-}
-
 void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
         if (!raw_args || !args) wk_err("invalid arguments");
         /* 将 raw_args 转换为列表 */
@@ -40,17 +20,17 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
                         for (size_t i = 0; i < argc; i++) {
                                 if (!args[i].name) continue;
                                 opt_name = a + 2;
-                                if (strstr(opt_name, args[i].name) != opt_name) continue;
+                                if (strcmp(opt_name, args[i].name) != 0) continue;
                                 hits++;
                                 target = i;
                                 break;
                         }
                         if (hits == 0) {
-                                fprintf(stderr, "invalid option --%s\n", opt_name);
+                                fprintf(stderr, "invalid option %s\n", a);
                                 goto NEXT_1;
                         }
                         if (hits > 1) {
-                                fprintf(stderr, "repeated option!\n");
+                                fprintf(stderr, "repeated option %s\n", a);
                                 goto NEXT_1;
                         }
                         /* 长选项匹配成功，将 it 所指节点消耗掉 */
@@ -88,15 +68,14 @@ void wk_cli_parse(char **raw_args, int raw_argc, WKArg *args, size_t argc) {
                         size_t target = 0;
                         const char *opt_name = a + 1;
                         for (size_t i = 0; i < argc; i++) { /* 短选项匹配 */
-                                if (!args[i].name) continue;
-                                double likeness = opt_match(opt_name, args[i].name);
-                                if (likeness < 1.0) continue;
+                                if (!args[i].short_name) continue;
+                                if (strcmp(opt_name, args[i].short_name) != 0) continue;
                                 hits++;
                                 target = i;
                         }
                         if (hits != 1) {
                                 wk_list_del(arg_list, it);
-                                fprintf(stderr, "invalid option!\n");
+                                fprintf(stderr, "invalid option %s!\n", a);
                                 goto NEXT_2;
                         }
                         /* 短选项匹配成功，将 it 所指节点消耗掉 */
@@ -165,18 +144,18 @@ void wk_arg_print(WKArg *arg) {
         if (arg->name) {
                 if (strcmp(arg->type, "toggle") == 0) {
                         if (arg->value.toggle) {
-                                printf("%s:\n  type: %s\n  value: true\n", arg->name, arg->type);
+                                printf("%s, %s:\n  type: %s\n  value: true\n", arg->name, arg->short_name, arg->type);
                         } else {
-                                printf("%s:\n  type: %s\n  value: false\n", arg->name, arg->type);
+                                printf("%s, %s:\n  type: %s\n  value: false\n", arg->name, arg->short_name, arg->type);
                         }
                         return;
                 }
                 if (strcmp(arg->type, "text") == 0) {
-                        printf("%s:\n  type: %s\n  value: \"%s\"\n", arg->name, arg->type, arg->value.text);
+                        printf("%s, %s:\n  type: %s\n  value: \"%s\"\n", arg->name, arg->short_name, arg->type, arg->value.text);
                         return;
                 }
                 if (strcmp(arg->type, "numeric") == 0) {
-                        printf("%s:\n  type: %s\n  value: %lf\n", arg->name, arg->type, arg->value.numeric);
+                        printf("%s, %s:\n  type: %s\n  value: %lf\n", arg->name, arg->short_name, arg->type, arg->value.numeric);
                         return;
                 }
         } else {

@@ -4,10 +4,10 @@ int main(int argc, char **argv) {
         printf(">>> testing cli...\n");
         /* 准备选项/参数表 */
         WKArg args[] = {
-                WK_ARG_TOGGLE("foo"),
-                WK_ARG_TEXT("bar"),
-                WK_ARG_NUMERIC("num"),
-                WK_ARG_TEXT(NULL)
+                WK_ARG_TOGGLE("foo", "f"),
+                WK_ARG_TEXT("bar", "b"),
+                WK_ARG_NUMERIC("num", "n"),
+                WK_ARG_TEXT(NULL, NULL)
         };
         size_t n = sizeof(args) / sizeof(WKArg);
         /* 解析 argv */

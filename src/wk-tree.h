@@ -18,17 +18,17 @@ WKTree *WK_TREE(size_t u);
 #define wk_tree(T) WK_TREE(sizeof(T))
 void wk_tree_free(WKTree *tree);
 
-WKBranch *WK_BRANCH(WKTree *tree, void *data, size_t u);
-#define wk_branch(tree, val, T) WK_BRANCH(tree, &(T){val}, sizeof(T))
+WKBranch *WK_BRANCH(WKTree *tree, void *data);
+#define wk_branch(tree, val, T) WK_BRANCH(tree, &(T){val})
 void wk_branch_free(WKBranch *branch);
 
-/* 将一个现有的分支插入到树中，作为指定分支的子分支 */
-void wk_tree_graft(WKTree *tree, WKBranch *target, WKBranch *branch);
+WKBranch *WK_TREE_ADD(WKTree *tree, WKBranch *target, void *data);
+#define wk_tree_add(tree, branch, val, T) \
+        WK_TREE_ADD(tree, branch, &(T){val})
 
-/* 基于 wk_tree_graft 实现 */
-WKBranch *WK_TREE_ADD(WKTree *tree, WKBranch *target, void *data, size_t u);
-#define wk_tree_add(tree, branch, val, T)        \
-        WK_TREE_ADD(tree, branch, &(T){val}, sizeof(T))
+WKBranch *WK_TREE_INS(WKTree *tree, WKBranch *target, size_t i, void *data);
+#define wk_tree_ins(tree, branch, i, val, T)	\
+        WK_TREE_INS(tree, branch, i, &(T){val})
 
 /* 将分支从树中砍下来 */
 WKBranch *wk_tree_cut(WKTree *tree, WKBranch *branch);

@@ -17,10 +17,11 @@ void wk_str_ins(WKStr *str, size_t index, const char *raw);
 #define wk_str_suffix(str, raw) wk_str_ins(str, str->n, raw)
 
 void wk_str_suffix_char(WKStr *str, char c);
+void wk_str_replace(WKStr *str, const char *a, const char *b);
 WKStr *wk_str_from_file(const char *path);
 
 size_t wk_str_find(WKStr *str, const char *target);
 void wk_str_del(WKStr *str, size_t begin, size_t n);
 WKStr *wk_str_trim(WKStr *str);
-
+void wk_str_printf(WKStr *str, const char *fmt, ...);
 #endif
