@@ -65,9 +65,10 @@ size_t wk_str_find(WKStr *str, const char *target) {
 }
 
 void wk_str_del(WKStr *str, size_t begin, size_t n) {
+        if (n == 0) return;
         /* 检查 [begin, begin + n] 是否超范围，或者 begin 为无穷大 */
         size_t j = begin + n;
-        if (begin >= str->n || j > str->n || begin == SIZE_MAX) {
+        if (j > str->n) {
                 wk_err("overrange");
         }
         /* 用 begin + n 之后的内容补位 */
