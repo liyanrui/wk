@@ -188,7 +188,8 @@ WKTable *wk_cfg(const char *path) {
                                 before_c = fgetc(fp);
                                 fseek(fp, 1, SEEK_CUR);
                                 if (before_c != '\\') {
-                                        Token *t = create_token(QUOTED_RIGHT_V, line, wk_str_trim(value));
+                                        /* 带引号的右值，首尾空白字符保留 */
+                                        Token *t = create_token(QUOTED_RIGHT_V, line, value);
                                         wk_list_suffix(tokens, t, Token *);
                                         value = wk_str(NULL);
                                         status = INIT;
